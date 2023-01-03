@@ -1,12 +1,13 @@
 #!/bin/bash
 #################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.0
+#  version: 1.1
 #    usage: microfocus_itom_omt_system_args.sh
 # describe: Auto adjust system parameters to meet OMT(OPTIC Management Toolkit) installation conditions
 #
 # release nodes:
 #   2022.12.03 - first release
+#   2023.01.03 - add AlmaLinux 8.x / change comment
 #################################################################
 
 # Global
@@ -33,10 +34,10 @@ function check_os_settings() {
         message="`date -u` check_os_settings [INFO] OS is RHEL 7/ CentOS 7"
         echo $message
 
-    elif [[ `cat /etc/redhat-release | grep -E 'RedHat.*8\.[1-9]|CentOS.*8\.[1-9]|Rocky.*8\.[1-9]'` != "" ]]
+    elif [[ `cat /etc/redhat-release | grep -E 'RedHat.*8\.[1-9]|CentOS.*8\.[1-9]|Rocky.*8\.[1-9]|AlmaLinux.*8\.[1-9]'` != "" ]]
     then
         os_type="RHEL8"
-        message="`date -u` check_os_settings [INFO] OS is RHEL 8 /CentOS 8 /Rocky Linux 8"
+        message="`date -u` check_os_settings [INFO] OS is RHEL 8 /CentOS 8 /Rocky Linux 8 /AlmaLinux 8"
         echo $message
 
     elif [[ $(os_type) == "Other" ]]
@@ -128,60 +129,77 @@ systemctl stop firewalld
 
 # Finish Info
 echo "`date -u` FinishInfo [INFO] parameters are adjusted, please configure the following parameters as required"
-echo -e "\n"
-echo "1.Configuring the NFS, for example:"
-echo "    cd OMT_Embedded_K8s_<version>/cdf/scripts"
-echo "    ./setupNFS.sh /var/vols/itom/core true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/db-single-vol true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/db-backup-vol true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/itom-logging-vol true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol1 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol2 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol3 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol4 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol5 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol6 true 1999 1999"
-echo "    ./setupNFS.sh /var/vols/itom/opsbvol7 true 1999 1999"
-echo -e "\n"
-echo "    chmod -R 755 /var/vols/itom/core"
-echo "    chmod -R 755 /var/vols/itom/db-single-vol"
-echo "    chmod -R 755 /var/vols/itom/db-backup-vol"
-echo "    chmod -R 755 /var/vols/itom/itom-logging-vol"
-echo "    chmod -R 755 /var/vols/itom/opsbvol1"
-echo "    chmod -R 755 /var/vols/itom/opsbvol2"
-echo "    chmod -R 755 /var/vols/itom/opsbvol3"
-echo "    chmod -R 755 /var/vols/itom/opsbvol4"
-echo "    chmod -R 755 /var/vols/itom/opsbvol5"
-echo "    chmod -R 755 /var/vols/itom/opsbvol6"
-echo "    chmod -R 755 /var/vols/itom/opsbvol7"
-echo -e "\n"
-echo "2.Configuring k8s PVs if you need COSO"
-echo "    dd if=/dev/zero of=/var/opt/vol1 bs=1G count=20"
-echo "    dd if=/dev/zero of=/var/opt/vol2 bs=1G count=20"
-echo "    dd if=/dev/zero of=/var/opt/vol3 bs=1G count=20"
-echo "    mkfs.ext4 -F /var/opt/vol1"
-echo "    mkfs.ext4 -F /var/opt/vol2"
-echo "    mkfs.ext4 -F /var/opt/vol3"
-echo "    mkdir -p /mnt/disks/lpv1"
-echo "    mkdir -p /mnt/disks/lpv2"
-echo "    mkdir -p /mnt/disks/lpv3"
-echo "    mount /var/opt/vol1 /mnt/disks/lpv1"
-echo "    mount /var/opt/vol2 /mnt/disks/lpv2"
-echo "    mount /var/opt/vol3 /mnt/disks/lpv3"
-echo -e "\n"
-echo "    Edit the /etc/fstab and add entries for the new file-based filesystems"
-echo "    Check /etc/fstab can use command: df -h |grep -E 'Filesystem|lpv"
-echo "    /var/opt/vol1 /mnt/disks/lpv1 ext4 defaults"
-echo "    /var/opt/vol2 /mnt/disks/lpv2 ext4 defaults"
-echo "    /var/opt/vol3 /mnt/disks/lpv3 ext4 defaults"
-echo -e "\n"
-echo "    Edit permission"
-echo "    chown -R 1999:1999 /mnt/disks/*; chmod -R 755 /mnt/disks; ls -la /mnt/disks"
-echo -e "\n"
-echo "3.Install ITOM OMT"
-echo "    CDF 2021.XX"
-echo "    ./install --nfs-server <nfs_server> --nfs-folder /var/vols/itom/core -c config.json"
-echo -e "\n"
-echo "    CDF 2022.XX"
-echo "    ./install -c <abs_path_config.json> --nfsprov-server vm-opsb.home.local --nfsprov-folder /var/vols/itom/data --capabilities NfsProvisioner=true"
-echo -e "\n"
+echo -e "
+\033[32m 1.Configuring the NFS, for example: \033[0m
+    \033[34m# OpsB 2021.XX: \033[0m
+    cd OMT_Embedded_K8s_<version>/cdf/scripts
+    ./setupNFS.sh /var/vols/itom/core true 1999 1999
+    ./setupNFS.sh /var/vols/itom/db-single-vol true 1999 1999
+    ./setupNFS.sh /var/vols/itom/db-backup-vol true 1999 1999
+    ./setupNFS.sh /var/vols/itom/itom-logging-vol true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol1 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol2 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol3 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol4 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol5 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol6 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol7 true 1999 1999
+    chmod -R 755 /var/vols/itom/core
+    chmod -R 755 /var/vols/itom/db-single-vol
+    chmod -R 755 /var/vols/itom/db-backup-vol
+    chmod -R 755 /var/vols/itom/itom-logging-vol
+    chmod -R 755 /var/vols/itom/opsbvol1
+    chmod -R 755 /var/vols/itom/opsbvol2
+    chmod -R 755 /var/vols/itom/opsbvol3
+    chmod -R 755 /var/vols/itom/opsbvol4
+    chmod -R 755 /var/vols/itom/opsbvol5
+    chmod -R 755 /var/vols/itom/opsbvol6
+    chmod -R 755 /var/vols/itom/opsbvol7
+
+    \033[34m# OpsB 2022.XX: \033[0m
+    cd OMT_Embedded_K8s_<version>/cdf/scripts
+    ./setupNFS.sh /var/vols/itom/data true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol1 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol2 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol3 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol4 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol5 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol6 true 1999 1999
+    ./setupNFS.sh /var/vols/itom/opsbvol7 true 1999 1999
+    chmod -R 755 /var/vols/itom/data
+    chmod -R 755 /var/vols/itom/opsbvol1
+    chmod -R 755 /var/vols/itom/opsbvol2
+    chmod -R 755 /var/vols/itom/opsbvol3
+    chmod -R 755 /var/vols/itom/opsbvol4
+    chmod -R 755 /var/vols/itom/opsbvol5
+    chmod -R 755 /var/vols/itom/opsbvol6
+    chmod -R 755 /var/vols/itom/opsbvol7
+
+\033[32m 2.Configuring k8s PVs if you need COSO \033[0m
+    dd if=/dev/zero of=/var/opt/vol1 bs=1G count=20
+    dd if=/dev/zero of=/var/opt/vol2 bs=1G count=20
+    dd if=/dev/zero of=/var/opt/vol3 bs=1G count=20
+    mkfs.ext4 -F /var/opt/vol1
+    mkfs.ext4 -F /var/opt/vol2
+    mkfs.ext4 -F /var/opt/vol3
+    mkdir -p /mnt/disks/lpv1
+    mkdir -p /mnt/disks/lpv2
+    mkdir -p /mnt/disks/lpv3
+    mount /var/opt/vol1 /mnt/disks/lpv1
+    mount /var/opt/vol2 /mnt/disks/lpv2
+    mount /var/opt/vol3 /mnt/disks/lpv3
+
+    \033[34m# Edit the /etc/fstab and add entries for the new file-based filesystems \033[0m
+    \033[34m# Check /etc/fstab can use command: df -h |grep -E 'Filesystem|lpv \033[0m
+    /var/opt/vol1 /mnt/disks/lpv1 ext4 defaults
+    /var/opt/vol2 /mnt/disks/lpv2 ext4 defaults
+    /var/opt/vol3 /mnt/disks/lpv3 ext4 defaults
+
+    \033[34m# Edit permission \033[0m
+    chown -R 1999:1999 /mnt/disks/*; chmod -R 755 /mnt/disks; ls -la /mnt/disks
+
+\033[32m 3.Install ITOM OMT \033[0m
+    \033[34m# CDF 2021.XX \033[0m
+    ./install --nfs-server <nfs_server> --nfs-folder /var/vols/itom/core -c config.json
+    \033[34m# CDF 2022.XX \033[0m
+    ./install -c <abs_path_config.json> --nfsprov-server <nfs-hostname/fqdn> --nfsprov-folder /var/vols/itom/data --capabilities NfsProvisioner=true"
