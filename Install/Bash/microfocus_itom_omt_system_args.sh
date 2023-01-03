@@ -131,7 +131,7 @@ systemctl stop firewalld
 echo "`date -u` FinishInfo [INFO] parameters are adjusted, please configure the following parameters as required"
 echo -e "
 \033[32m 1.Configuring the NFS, for example: \033[0m
-    \033[34m# OpsB 2021.XX: \033[0m
+    \033[34m# OpsB 2021.XX \033[0m
     cd OMT_Embedded_K8s_<version>/cdf/scripts
     ./setupNFS.sh /var/vols/itom/core true 1999 1999
     ./setupNFS.sh /var/vols/itom/db-single-vol true 1999 1999
@@ -156,7 +156,7 @@ echo -e "
     chmod -R 755 /var/vols/itom/opsbvol6
     chmod -R 755 /var/vols/itom/opsbvol7
 
-    \033[34m# OpsB 2022.XX: \033[0m
+    \033[34m# OpsB 2022.XX \033[0m
     cd OMT_Embedded_K8s_<version>/cdf/scripts
     ./setupNFS.sh /var/vols/itom/data true 1999 1999
     ./setupNFS.sh /var/vols/itom/opsbvol1 true 1999 1999
@@ -202,4 +202,4 @@ echo -e "
     \033[34m# CDF 2021.XX \033[0m
     ./install --nfs-server <nfs_server> --nfs-folder /var/vols/itom/core -c config.json
     \033[34m# CDF 2022.XX \033[0m
-    ./install -c <abs_path_config.json> --nfsprov-server <nfs-hostname/fqdn> --nfsprov-folder /var/vols/itom/data --capabilities NfsProvisioner=true"
+    ./install -c <abs_path_config.json> --nfsprov-server <nfs_server> --nfsprov-folder /var/vols/itom/data --capabilities NfsProvisioner=true"
