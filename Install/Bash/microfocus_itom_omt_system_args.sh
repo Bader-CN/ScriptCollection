@@ -11,7 +11,7 @@
 #################################################################
 
 # Global
-os_type="Other"
+os_type="Others"
 
 # Check OS & Settings
 function check_os_settings() {
