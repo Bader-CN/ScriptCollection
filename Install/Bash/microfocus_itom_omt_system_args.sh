@@ -8,7 +8,6 @@
 # release nodes:
 #   2022.12.03 - first release
 #   2023.01.03 - add AlmaLinux 8.x / change comment
-#   2023.01.30 - change file format CRLF -> LF
 #################################################################
 
 # Global
