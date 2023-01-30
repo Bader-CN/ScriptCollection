@@ -8,6 +8,7 @@
 #
 # release nodes:
 #   2022.06.14 - first release
+#   2023.01.30 - change file format CRLF -> LF
 #################################################################
 
 # User variables
