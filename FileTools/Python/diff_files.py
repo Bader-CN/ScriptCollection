@@ -32,7 +32,7 @@ def check_args(input_args):
     args_dst_folder = "Null"
 
     if len(input_args) > 1:
-        args_dst_folder = input_args[0]
+        args_dst_folder = input_args[1]
     else:
         return {"mode" : "help"}
 
