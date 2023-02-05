@@ -152,20 +152,20 @@ if __name__ == "__main__":
     checked = check_args(input_args)
     try:
         if checked.get("mode") == "help":
-            print("""
-            usage:
-            1. Generate a filepath hash database on the src path
-               diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
-               
-            2. Matching dst path using a hash database
-               diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
-               
-            args:
-            # -o            Create a hash database
-            # -db           Use hash database to compare file differences
-            # -filter       Regular Exp String, matched path will be calculated hash   
-            # -not-filter   Regular Exp String, matched path will not be calculated hash
-            """)
+            print(
+            "usage:\n",
+            "1. Generate a filepath hash database on the src path\n",
+            "   diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]\n",
+            "\n",
+            "2. Matching dst path using a hash database\n",
+            "   diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]\n",
+            "\n",
+            "args:\n",
+            "# -o            Create a hash database\n",
+            "# -db           Use hash database to compare file differences\n",
+            "# -filter       Regular Exp String, matched path will be calculated hash\n",
+            "# -not-filter   Regular Exp String, matched path will not be calculated hash\n",
+            )
         elif checked.get("mode") == "compare":
             compare_diff_file(checked)
         elif checked.get("mode") == "create":
