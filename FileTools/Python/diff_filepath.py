@@ -10,7 +10,7 @@
 # describe: Find different files path in a specified folder
 #
 # release nodes:
-#   2022.**.** - first release
+#   2022.02.05 - first release
 ########################################################################################################################
 
 import os
@@ -152,7 +152,20 @@ if __name__ == "__main__":
     checked = check_args(input_args)
     try:
         if checked.get("mode") == "help":
-            print("please reference help info")
+            print("""
+            usage:
+            1. Generate a filepath hash database on the src path
+               diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+               
+            2. Matching dst path using a hash database
+               diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+               
+            args:
+            # -o            Create a hash database
+            # -db           Use hash database to compare file differences
+            # -filter       Regular Exp String, matched path will be calculated hash   
+            # -not-filter   Regular Exp String, matched path will not be calculated hash
+            """)
         elif checked.get("mode") == "compare":
             compare_diff_file(checked)
         elif checked.get("mode") == "create":
