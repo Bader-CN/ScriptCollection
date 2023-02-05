@@ -1,17 +1,17 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-#################################################################
+########################################################################################################################
 #   author: zhanghong.personal@outlook.com
 #  version: 1.0
 #    usage:
-#    - compare files: diff_files.py <file/folder to be compared> -db <comparison database file> [-filter <Regular expressions>] [-not-filter <Regular expressions>]
-#    - create filedb: diff_files.py <file/folder path> -o <files db name> [-filter <Regular expressions>] [-not-filter <Regular expressions>]
-# describe: Find different files based on db
+#    - create comparedb: diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+#    - compare filepath: diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+# describe: Find different files path in a specified folder
 #
 # release nodes:
 #   2022.**.** - first release
-#################################################################
+########################################################################################################################
 
 import os
 import re
