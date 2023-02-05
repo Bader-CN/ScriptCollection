@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 ########################################################################################################################
@@ -74,8 +74,8 @@ def file_hash(file_path):
     """
     h = hashlib.sha1()
     with open(file_path, 'rb') as f:
-        while b := f.read(8192):
-            h.update(b)
+        data = f.read()
+        h.update(data)
     return h.hexdigest()
 
 def create_diff_db(args_dict):
