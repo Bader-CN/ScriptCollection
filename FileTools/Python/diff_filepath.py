@@ -5,8 +5,10 @@
 #   author: zhanghong.personal@outlook.com
 #  version: 1.1
 #    usage:
-#    - create comparedb: diff_filepath.py -d <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>] [-debug True]
-#    - compare filepath: diff_filepath.py -d <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>] [-debug True]
+#    - create comparedb:
+#      diff_filepath.py -d <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>] [-debug True]
+#    - compare filepath:
+#      diff_filepath.py -d <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>] [-debug True]
 # describe: Find different files path in a specified folder
 #
 # release nodes:
