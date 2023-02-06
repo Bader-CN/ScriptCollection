@@ -11,7 +11,7 @@
 #
 # release nodes:
 #   2022.02.05 - first release
-#   2022.02.** - Add the -d/-debug args, fix some bugs
+#   2022.02.06 - Add the -d/-debug args, fix some bugs
 ########################################################################################################################
 
 import os
@@ -127,9 +127,10 @@ def create_diff_db(args_dict):
                     try:
                         filehash = file_hash(filepath)
                         diffdb[filepath] = filehash
-                    except Exception as e:
                         if debug_value:
-                            print("[WARN] Can't calculate file hash\nFile is: {}\nReason is: {}".format(filehash, e))
+                            print("[DEBUG] {} | {}".format(filehash, filepath))
+                    except Exception as e:
+                        print("[WARN] Can't calculate file hash\n-> File is: {}\n-> Reason is: {}".format(filehash, e))
     else:
         for root, dirs, files in os.walk(dst_folder):
             for file in files:
@@ -138,9 +139,10 @@ def create_diff_db(args_dict):
                     try:
                         filehash = file_hash(filepath)
                         diffdb[filepath] = filehash
-                    except Exception as e:
                         if debug_value:
-                            print("[WARN] Can't calculate file hash\nFile is: {}\nReason is: {}".format(filehash, e))
+                            print("[DEBUG] {} | {}".format(filehash, filepath))
+                    except Exception as e:
+                        print("[WARN] Can't calculate file hash\n-> File is: {}\n-> Reason is: {}".format(filehash, e))
 
     with open(dbname, "wb") as f:
         try:
@@ -174,11 +176,12 @@ def compare_diff_file(args_dict):
                     try:
                         filehash = file_hash(filepath)
                         if filehash != diffdb.get(filepath):
-                            print("Diff found: {}".format(filepath))
+                            print("[DIFF]: {} | {} | {}".format(filehash, diffdb.get(filepath), filepath))
                             diff_count += 1
+                            if debug_value:
+                                print("[DEBUG] {} | {}".format(filehash, filepath))
                     except Exception as e:
-                        if debug_value:
-                            print("[WARN] Can't calculate file hash\nFile is: {}\nReason is: {}".format(filehash, e))
+                        print("[WARN] Can't calculate file hash\n-> File is: {}\n-> Reason is: {}".format(filehash, e))
     else:
         for root, dirs, files in os.walk(dst_folder):
             for file in files:
@@ -187,11 +190,12 @@ def compare_diff_file(args_dict):
                     try:
                         filehash = file_hash(filepath)
                         if filehash != diffdb.get(filepath):
-                            print("Diff found: {}".format(filepath))
+                            print("[DIFF]: {} | {} | {}".format(filehash, diffdb.get(filepath), filepath))
                             diff_count += 1
-                    except Exception as e:
                         if debug_value:
-                            print("[WARN] Can't calculate file hash\nFile is: {}\nReason is: {}".format(filehash, e))
+                            print("[DEBUG] {} | {}".format(filehash, filepath))
+                    except Exception as e:
+                        print("[WARN] Can't calculate file hash\n-> File is: {}\n-> Reason is: {}".format(filehash, e))
 
     if diff_count == 0:
         print("[INFO] Comparison completed, no different files found.")
@@ -219,6 +223,7 @@ if __name__ == "__main__":
                 "# -db           Use hash database to compare file differences\n",
                 "# -filter       Regular Exp String, matched path will be calculated hash\n",
                 "# -not-filter   Regular Exp String, matched path will not be calculated hash\n",
+                "# -debug        If the value is True, it shows which files were read\n",
             )
         elif checked.get("mode") == "compare":
             compare_diff_file(checked)
