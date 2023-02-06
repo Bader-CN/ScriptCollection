@@ -225,4 +225,4 @@ if __name__ == "__main__":
         elif checked.get("mode") == "create":
             create_diff_db(checked)
     except Exception as e:
-        print("[ERROR] Execution error, reason is {e}")
+        print("[ERROR] Execution error, reason is: {e}")
