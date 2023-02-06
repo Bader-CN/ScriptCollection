@@ -223,7 +223,8 @@ if __name__ == "__main__":
                 "# -db           Use hash database to compare file differences\n",
                 "# -filter       Regular Exp String, matched path will be calculated hash\n",
                 "# -not-filter   Regular Exp String, matched path will not be calculated hash\n",
-                "# -debug        If the value is True, it shows which files were read\n",)
+                "# -debug        If the value is True, it shows which files were read\n",
+            )
         elif checked.get("mode") == "compare":
             compare_diff_file(checked)
         elif checked.get("mode") == "create":
