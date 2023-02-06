@@ -5,8 +5,8 @@
 #   author: zhanghong.personal@outlook.com
 #  version: 1.0
 #    usage:
-#    - create comparedb: diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
-#    - compare filepath: diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+#    - create comparedb: diff_filepath.py -d <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
+#    - compare filepath: diff_filepath.py -d <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
 # describe: Find different files path in a specified folder
 #
 # release nodes:
@@ -31,22 +31,37 @@ def check_args(input_args):
     args_output = "Null"
     args_dst_folder = "Null"
 
-    if len(input_args) > 1:
-        args_dst_folder = input_args[1]
-    else:
+    if len(input_args) <= 1:
         return {"mode" : "help"}
-
-    for args in input_args:
-        if args in ["-h", "help"]:
-            return {"mode" : "help"}
-        elif args == "-db":
-            args_db = input_args[input_args.index("-db") + 1]
-        elif args == "-o":
-            args_output = input_args[input_args.index("-o") + 1]
-        elif args == "-filter":
-            args_filter = input_args[input_args.index("-filter") + 1]
-        elif args == "-not-filter":
-            args_not_filter = input_args[input_args.index("-not-filter") + 1]
+    else:
+        for args in input_args:
+            if args in ["-h", "help"]:
+                return {"mode" : "help"}
+            elif args == "-d":
+                try:
+                    args_dst_folder = input_args[input_args.index("-d") + 1]
+                except:
+                    return {"mode": "help"}
+            elif args == "-db":
+                try:
+                    args_db = input_args[input_args.index("-db") + 1]
+                except:
+                    return {"mode": "help"}
+            elif args == "-o":
+                try:
+                    args_output = input_args[input_args.index("-o") + 1]
+                except:
+                    return {"mode": "help"}
+            elif args == "-filter":
+                try:
+                    args_filter = input_args[input_args.index("-filter") + 1]
+                except:
+                    return {"mode": "help"}
+            elif args == "-not-filter":
+                try:
+                    args_not_filter = input_args[input_args.index("-not-filter") + 1]
+                except:
+                    return {"mode": "help"}
 
     # 指定了 -db 参数, 说明是比对模式
     if args_dst_folder != "Null" and args_db != "Null":
