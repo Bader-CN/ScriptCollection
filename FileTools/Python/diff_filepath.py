@@ -3,7 +3,7 @@
 
 ########################################################################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.0
+#  version: 1.1
 #    usage:
 #    - create comparedb: diff_filepath.py -d <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
 #    - compare filepath: diff_filepath.py -d <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]
@@ -11,6 +11,7 @@
 #
 # release nodes:
 #   2022.02.05 - first release
+#   2022.02.** - Add the -d args, fix some bugs
 ########################################################################################################################
 
 import os
@@ -177,6 +178,7 @@ if __name__ == "__main__":
             "   diff_filepath.py <file/folder path> -db <database file> [-filter <Regular Exp>] [-not-filter <Regular Exp>]\n",
             "\n",
             "args:\n",
+            "# -d            Folder that require hash calculation\n",
             "# -o            Create a hash database\n",
             "# -db           Use hash database to compare file differences\n",
             "# -filter       Regular Exp String, matched path will be calculated hash\n",
