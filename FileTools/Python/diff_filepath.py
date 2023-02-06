@@ -153,7 +153,8 @@ if __name__ == "__main__":
     try:
         if checked.get("mode") == "help":
             print(
-            "usage:\n",
+            "\n",
+            "Usage:\n",
             "1. Generate a filepath hash database on the src path\n",
             "   diff_filepath.py <file/folder path>  -o <database name> [-filter <Regular Exp>] [-not-filter <Regular Exp>]\n",
             "\n",
