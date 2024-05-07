@@ -3,7 +3,7 @@
 
 ########################################################################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.0
+#  version: 1.1
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...]
 # release nodes:
 #   2024.05.07 - first release
@@ -200,3 +200,7 @@ if report_survy is not None:
 output_file = "{}-{}".format(str(y_offset), str(m_offset)) + ".csv"
 df = pd.DataFrame(summary_data, columns=summary_data[0])
 df.to_csv(output_file, index=False, header=["KPI", "{}-{}".format(str(y_offset), str(m_offset))])
+
+# 打印结果
+table.add_rows(summary_data)
+print(table)
