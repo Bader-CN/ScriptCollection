@@ -1,2 +1,11 @@
-# 忽略的文件
+# PyCharm
 .idea/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
