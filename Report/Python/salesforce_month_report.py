@@ -48,7 +48,7 @@ table.field_names = ["KPI", "{}-{}".format(str(y_offset), str(m_offset))]
 
 # 检查原始报告是否符合要求
 for i in os.listdir(os.path.abspath("./")):
-    if re.findall("report\d+.csv", i, re.IGNORECASE):
+    if re.findall(r"report\d+.csv", i, re.IGNORECASE):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
             # 检查是否符合 cases 报告
