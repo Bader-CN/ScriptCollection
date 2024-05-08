@@ -52,7 +52,7 @@ for i in os.listdir(os.path.abspath("./")):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
             # 检查是否符合 cases 报告
-            if all(x in heads for x in ["Date/Time Opened", "Closed Date", "Suggested_Solution_Date", "Status", "Knowledge Base Article", "Idol Knowledge Link", "R&D Incident", "Escalated"]):
+            if all(x in heads for x in ["Case Number", "Date/Time Opened", "Closed Date", "Suggested_Solution_Date", "Status", "Knowledge Base Article", "Idol Knowledge Link", "R&D Incident", "Escalated"]):
                 report_cases = i
             if all(x in heads for x in ["Customer Feed Back Survey: Last Modified Date", "Closed Data", "OpenText made it easy to handle my case", "Satisfied with support experience"]):
                 report_survy = i
@@ -77,8 +77,10 @@ if report_cases is not None:
     # 计算当前状态下状态为非 Closed 的 cases
     backlog = rawcase[rawcase["Status"] != "Closed"]
     backlog = backlog[backlog["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
-    backlog_history = rawcase[rawcase["Closed Date"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
+    backlog_history = rawcase[rawcase["Status"] == "Closed"]
+    backlog_history = backlog_history[backlog_history["Closed Date"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
     backlog_history = backlog_history[backlog_history["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
+    
     # KCS 相关
     kcs_all = close_cases_m[close_cases_m["Knowledge Base Article"].notna() | close_cases_m["Idol Knowledge Link"].notna()]
     # 分析数据并得出结果
@@ -125,7 +127,7 @@ if report_cases is not None:
         ssdata2 = close_cases_m[close_cases_m["Suggested_Solution_Date"].notna()]
         ssdata = pd.concat([ssdata1, ssdata2])
         ssdata = ssdata.sort_values(by=["Suggested_Solution_Date"], ascending=False)
-        ssdata = ssdata.drop_duplicates(subset="Case ID")
+        ssdata = ssdata.drop_duplicates(subset="Case Number")
         if len(ssdata) != 0:
             dtrdata = pd.DataFrame()
             dtrdata["Date/Time Opened"] = pd.to_datetime(ssdata["Date/Time Opened"]).dt.date
