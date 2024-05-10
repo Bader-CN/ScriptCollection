@@ -21,6 +21,8 @@ table = PrettyTable()
 summary_data = []
 report_cases = None
 report_survy = None
+report_miss_cases = []
+report_miss_survy = []
 open_cases_by_month = None
 clos_cases_by_month = None
 
@@ -79,14 +81,25 @@ for i in os.listdir(os.path.abspath("./")):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
             # 检查是否符合 cases 报告
-            if all(x in heads for x in ["Case Owner", "Case Number", "Date/Time Opened", "Closed Date", "Age (Days)", "Suggested_Solution_Date", "Status", "Knowledge Base Article", "Idol Knowledge Link", "R&D Incident", "Escalated"]):
+            head_by_cases = ["Case Owner", "Case Number", "Date/Time Opened", "Closed Date", "Age (Days)", "Suggested_Solution_Date", "Status", "Knowledge Base Article", "Idol Knowledge Link", "R&D Incident", "Escalated"]
+            if all(x in heads for x in head_by_cases):
                 report_cases = i
-            if all(x in heads for x in ["Case Owner", "Case Number", "Customer Feed Back Survey: Last Modified Date", "Closed Data", "OpenText made it easy to handle my case", "Satisfied with support experience"]):
+            else:
+                for head in head_by_cases:
+                    if head not in heads:
+                        report_miss_cases.append(head)
+
+            head_by_survy = ["Case Owner", "Case Number", "Customer Feed Back Survey: Last Modified Date", "Closed Data", "OpenText made it easy to handle my case", "Satisfied with support experience"]
+            if all(x in heads for x in head_by_survy):
                 report_survy = i
+            else:
+                for head in head_by_survy:
+                    if head not in heads:
+                        report_miss_survy.append(head)
 
 # 分析 Cases Report
 if report_cases is None:
-    print("Case report miss some columns. will be ignore.")
+    print("Case report miss columns: {}".format(str(report_miss_cases[1:-2])))
 else:
     rawcase = pd.read_csv(report_cases)
     # 数据预处理
@@ -217,7 +230,7 @@ else:
 
 # 分析 Survey Report
 if report_survy is None:
-    print("Survey report miss some columns. will be ignore.")
+    print("Survey report miss columns: {}".format(str(report_miss_survy[1:-2])))
 else:
     rawsurv = pd.read_csv(report_survy)
     # 数据预处理
