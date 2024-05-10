@@ -24,6 +24,7 @@ open_cases_by_month = None
 clos_cases_by_month = None
 
 # 定义偏移量, 如果不写默认是 0
+# noinspection PyBroadException
 try:
     month_offset = int(sys.argv[1])
 except:
@@ -80,7 +81,7 @@ if report_cases is not None:
     backlog_history = rawcase[rawcase["Status"] == "Closed"]
     backlog_history = backlog_history[backlog_history["Closed Date"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
     backlog_history = backlog_history[backlog_history["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
-    
+
     # KCS 相关
     kcs_all = close_cases_m[close_cases_m["Knowledge Base Article"].notna() | close_cases_m["Idol Knowledge Link"].notna()]
     # 分析数据并得出结果

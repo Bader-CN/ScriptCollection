@@ -1,6 +1,9 @@
 # PyCharm
 .idea/
 
+# Data File for test
+.csv
+
 # Environments
 .env
 .venv
