@@ -2,7 +2,7 @@
 .idea/
 
 # Data File for test
-.csv
+*.csv
 
 # Environments
 .env
