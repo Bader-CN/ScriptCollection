@@ -81,7 +81,18 @@ for i in os.listdir(os.path.abspath("./")):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
             # 检查是否符合 cases 报告
-            head_by_cases = ["Case Owner", "Case Number", "Date/Time Opened", "Closed Date", "Age (Days)", "Suggested_Solution_Date", "Status", "Knowledge Base Article", "Idol Knowledge Link", "R&D Incident", "Escalated"]
+            head_by_cases = [
+                "Case Owner",
+                "Case Number",
+                "Date/Time Opened",
+                "Closed Date",
+                "Age (Days)",
+                "Suggested_Solution_Date",
+                "Status", "Knowledge Base Article", 
+                "Idol Knowledge Link",
+                "R&D Incident",
+                "Escalated",
+            ]
             if all(x in heads for x in head_by_cases):
                 report_cases = i
             else:
@@ -89,7 +100,14 @@ for i in os.listdir(os.path.abspath("./")):
                     if head not in heads:
                         report_miss_cases.append(head)
 
-            head_by_survy = ["Case Owner", "Case Number", "Customer Feed Back Survey: Last Modified Date", "Closed Data", "OpenText made it easy to handle my case", "Satisfied with support experience"]
+            head_by_survy = [
+                "Case Owner",
+                "Case Number",
+                "Closed Data",
+                "Customer Feed Back Survey: Last Modified Date",
+                "OpenText made it easy to handle my case",
+                "Satisfied with support experience",
+            ]
             if all(x in heads for x in head_by_survy):
                 report_survy = i
             else:
