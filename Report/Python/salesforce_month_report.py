@@ -7,7 +7,7 @@
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...] [-debug]
 # release nodes:
 #   2024.05.07 - first release
-#   2024.05.xx - add debug function and change algorithms
+#   2024.05.10 - add debug function and change algorithms
 ########################################################################################################################
 
 import re
