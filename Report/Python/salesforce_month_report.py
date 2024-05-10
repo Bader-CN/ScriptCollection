@@ -85,10 +85,11 @@ for i in os.listdir(os.path.abspath("./")):
                 "Case Owner",
                 "Case Number",
                 "Date/Time Opened",
-                "Closed Date",
+                # "Closed Date",
+                "Date/Time Closed",
                 "Age (Days)",
                 "Suggested_Solution_Date",
-                "Status", "Knowledge Base Article", 
+                "Status", "Knowledge Base Article",
                 "Idol Knowledge Link",
                 "R&D Incident",
                 "Escalated",
@@ -122,13 +123,13 @@ else:
     rawcase = pd.read_csv(report_cases)
     # 数据预处理
     rawcase["Date/Time Opened"] = pd.to_datetime(rawcase["Date/Time Opened"], format="%Y-%m-%d %p%I:%M")
+    rawcase["Date/Time Closed"] = pd.to_datetime(rawcase["Date/Time Closed"], format="%Y-%m-%d %p%I:%M")
     rawcase["Suggested_Solution_Date"] = pd.to_datetime(rawcase["Suggested_Solution_Date"], format="%Y-%m-%d %p%I:%M")
-    rawcase["Closed Date"] = pd.to_datetime(rawcase["Closed Date"], format="%Y-%m-%d")
     # 根据年份和月份筛选数据
     open_cases_y = rawcase[rawcase["Date/Time Opened"].dt.year == y_offset]
     open_cases_m = open_cases_y[open_cases_y["Date/Time Opened"].dt.month == m_offset]
-    close_cases_y = rawcase[rawcase["Closed Date"].dt.year == y_offset]
-    close_cases_m = close_cases_y[close_cases_y["Closed Date"].dt.month == m_offset]
+    close_cases_y = rawcase[rawcase["Date/Time Closed"].dt.year == y_offset]
+    close_cases_m = close_cases_y[close_cases_y["Date/Time Closed"].dt.month == m_offset]
     # 赋值给共享变量, 这些值会用于其他的报表
     if len(open_cases_m) != 0:
         open_cases_by_month = open_cases_m
@@ -138,7 +139,7 @@ else:
     backlog = rawcase[rawcase["Status"] != "Closed"]
     backlog = backlog[backlog["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
     backlog_history = rawcase[rawcase["Status"] == "Closed"]
-    backlog_history = backlog_history[backlog_history["Closed Date"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
+    backlog_history = backlog_history[backlog_history["Date/Time Closed"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
     backlog_history = backlog_history[backlog_history["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
     backlog_total = pd.concat([backlog, backlog_history])
     # KCS 相关
