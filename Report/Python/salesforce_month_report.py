@@ -81,7 +81,6 @@ for i in os.listdir(os.path.abspath("./")):
     if re.findall(r"report\d+.csv", i, re.IGNORECASE):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
-            print(heads)
             # 检查是否符合 cases 报告
             head_by_cases = [
                 "Case Owner",
