@@ -7,7 +7,7 @@
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...] [-debug]
 # release nodes:
 #   2024.05.07 - first release
-#   2024.05.10 - add debug function and change algorithms
+#   2024.05.15 - add debug function and change algorithms
 ########################################################################################################################
 
 import re
@@ -48,14 +48,15 @@ def show_debug(filename, pdata, columns=None):
     :param columns: 输出那些列, 默认输出所有列, 接受的是列表形式的数据
     :return:
     """
-    if columns is not None:
-        pdata = pdata[columns]
-    pdata = pdata.reset_index(drop=True)
-    pdata.index = pdata.index + 1
+    if debug:
+        if columns is not None:
+            pdata = pdata[columns]
+        pdata = pdata.reset_index(drop=True)
+        pdata.index = pdata.index + 1
 
-    if os.path.exists(r".\debug") is False:
-        os.mkdir(r".\debug")
-    pdata.to_csv(r".\debug\{}".format(filename))
+        if os.path.exists(r".\debug") is False:
+            os.mkdir(r".\debug")
+        pdata.to_csv(r".\debug\{}".format(filename))
 
 
 # 计算指定的年月
@@ -80,6 +81,7 @@ for i in os.listdir(os.path.abspath("./")):
     if re.findall(r"report\d+.csv", i, re.IGNORECASE):
         with open(i, mode="r", encoding="utf-8") as f:
             heads = f.readline().strip().replace('"', '').split(",")
+            print(heads)
             # 检查是否符合 cases 报告
             head_by_cases = [
                 "Case Owner",
@@ -94,31 +96,22 @@ for i in os.listdir(os.path.abspath("./")):
                 "R&D Incident",
                 "Escalated",
             ]
-            if all(x in heads for x in head_by_cases):
-                report_cases = i
-            else:
-                for head in head_by_cases:
-                    if head not in heads:
-                        report_miss_cases.append(head)
-
             head_by_survy = [
                 "Case Owner",
                 "Case Number",
-                "Closed Data",
+                # "Closed Data",
                 "Customer Feed Back Survey: Last Modified Date",
                 "OpenText made it easy to handle my case",
                 "Satisfied with support experience",
             ]
+            if all(x in heads for x in head_by_cases):
+                report_cases = i
             if all(x in heads for x in head_by_survy):
                 report_survy = i
-            else:
-                for head in head_by_survy:
-                    if head not in heads:
-                        report_miss_survy.append(head)
 
 # 分析 Cases Report
 if report_cases is None:
-    print("Case report miss columns: {}".format(str(report_miss_cases[1:-2])))
+    print("[WARN] Case report miss columns, will ignore.")
 else:
     rawcase = pd.read_csv(report_cases)
     # 数据预处理
@@ -249,17 +242,17 @@ else:
 
 # 分析 Survey Report
 if report_survy is None:
-    print("Survey report miss columns: {}".format(str(report_miss_survy[1:-2])))
+    print("[WARN] Survey report miss columns, will ignore.")
 else:
     rawsurv = pd.read_csv(report_survy)
     # 数据预处理
     rawsurv["Customer Feed Back Survey: Last Modified Date"] = pd.to_datetime(rawsurv["Customer Feed Back Survey: Last Modified Date"], format="%Y-%m-%d")
-    rawsurv["Closed Data"] = pd.to_datetime(rawsurv["Closed Data"], format="%Y-%m-%d")
+    # rawsurv["Closed Data"] = pd.to_datetime(rawsurv["Closed Data"], format="%Y-%m-%d")
     rawsurv = rawsurv.sort_values(by=["Customer Feed Back Survey: Last Modified Date", ], ascending=False)
     rawsurv = rawsurv.drop_duplicates(subset="Case Number")
     # 根据年份和月份筛选数据
-    survey_y = rawsurv[rawsurv["Closed Data"].dt.year == y_offset]
-    survey_m = survey_y[survey_y["Closed Data"].dt.month == m_offset]
+    survey_y = rawsurv[rawsurv["Customer Feed Back Survey: Last Modified Date"].dt.year == y_offset]
+    survey_m = survey_y[survey_y["Customer Feed Back Survey: Last Modified Date"].dt.month == m_offset]
     survey_ces = survey_m[survey_m["OpenText made it easy to handle my case"] >= 8.0]
     survey_cast = survey_m[survey_m["Satisfied with support experience"] >= 8.0]
     # Survey CES & Survey CAST
