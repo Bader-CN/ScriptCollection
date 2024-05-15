@@ -161,30 +161,30 @@ else:
     if month_offset == 0 and (len(backlog_total)) >= 0:
         # Backlog > 30 的比例
         try:
-            backlog30_percentage = str(round(len(backlog[backlog["Age (Days)"] >= 30.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
-            show_debug("Cases_by_Backlog_ge_30.csv", backlog[backlog["Age (Days)"] >= 30.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age (Days)"])
+            backlog30_percentage = str(round(len(backlog[backlog["Age (Days)"] > 30.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
+            show_debug("Cases_by_Backlog_ge_30.csv", backlog[backlog["Age (Days)"] > 30.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age (Days)"])
         except KeyError:
-            backlog30_percentage = str(round(len(backlog[backlog["Age"] >= 30.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
-            show_debug("Cases_by_Backlog_ge_30.csv", backlog[backlog["Age"] >= 30.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
+            backlog30_percentage = str(round(len(backlog[backlog["Age"] > 30.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
+            show_debug("Cases_by_Backlog_ge_30.csv", backlog[backlog["Age"] > 30.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
         summary_data.append(["Backlog > 30", backlog30_percentage])
         # Backlog > 30 并且没有升级的比例
         try:
-            backlog30_no_cpe = backlog[backlog["Age (Days)"] >= 30.0]
+            backlog30_no_cpe = backlog[backlog["Age (Days)"] > 30.0]
             backlog30_no_cpe = backlog30_no_cpe[backlog30_no_cpe["R&D Incident"].isna()]
             show_debug("Cases_by_Backlog_ge_30_noCPE.csv", backlog30_no_cpe, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age (Days)"])
         except KeyError:
-            backlog30_no_cpe = backlog[backlog["Age"] >= 30.0]
+            backlog30_no_cpe = backlog[backlog["Age"] > 30.0]
             backlog30_no_cpe = backlog30_no_cpe[backlog30_no_cpe["R&D Incident"].isna()]
             show_debug("Cases_by_Backlog_ge_30_noCPE.csv", backlog30_no_cpe, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
         backlog_30_no_cpe = str(round(len(backlog30_no_cpe) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
         summary_data.append(["Backlog > 30 (Support)", backlog_30_no_cpe])
         # Backlog > 90 的比例
         try:
-            backlog90_percentage = str(round(len(backlog[backlog["Age (Days)"] >= 90.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
-            show_debug("Cases_by_Backlog_ge_90.csv", backlog[backlog["Age (Days)"] >= 90.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age (Days)"])
+            backlog90_percentage = str(round(len(backlog[backlog["Age (Days)"] > 90.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
+            show_debug("Cases_by_Backlog_ge_90.csv", backlog[backlog["Age (Days)"] > 90.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age (Days)"])
         except KeyError:
-            backlog90_percentage = str(round(len(backlog[backlog["Age"] >= 90.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
-            show_debug("Cases_by_Backlog_ge_90.csv", backlog[backlog["Age"] >= 90.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
+            backlog90_percentage = str(round(len(backlog[backlog["Age"] > 90.0]) / (len(backlog) + len(backlog_history)) * 100, 2)) + "%"
+            show_debug("Cases_by_Backlog_ge_90.csv", backlog[backlog["Age"] > 90.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
         summary_data.append(["Backlog > 90", backlog90_percentage])
         # DTR 计算
         ssdata1 = backlog[backlog["Suggested_Solution_Date"].notna()]
@@ -258,8 +258,8 @@ else:
     if len(survey_m) > 0:
         summary_data.append(["Survey CES", str(round(len(survey_ces) / len(survey_m) * 100, 2)) + "%"])
         summary_data.append(["Survey CAST", str(round(len(survey_cast) / len(survey_m) * 100, 2)) + "%"])
-        show_debug("Survey_CES_ge_8_by_month", survey_ces, columns=["Case Owner", "Case Number", "OpenText made it easy to handle my case"])
-        show_debug("Survey_CAST_ge_8_by_month", survey_ces, columns=["Case Owner", "Case Number", "Satisfied with support experience"])
+        show_debug("Survey_CES_ge_8_by_month.csv", survey_ces, columns=["Case Owner", "Case Number", "OpenText made it easy to handle my case"])
+        show_debug("Survey_CAST_ge_8_by_month.csv", survey_ces, columns=["Case Owner", "Case Number", "Satisfied with support experience"])
     else:
         summary_data.append(["Survey CES", "-"])
         summary_data.append(["Survey CAST", "-"])
