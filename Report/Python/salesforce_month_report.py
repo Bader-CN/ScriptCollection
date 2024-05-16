@@ -3,11 +3,12 @@
 
 ########################################################################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.1
+#  version: 1.2
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...] [-debug]
 # release nodes:
 #   2024.05.07 - first release
 #   2024.05.15 - add debug function and change algorithms
+#   2024.05.16 - change DTR related algorithms
 ########################################################################################################################
 
 import re
@@ -187,36 +188,52 @@ else:
             show_debug("Cases_by_Backlog_ge_90.csv", backlog[backlog["Age"] > 90.0], columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Age"])
         summary_data.append(["Backlog > 90", backlog90_percentage])
         # DTR 计算
-        ssdata1 = backlog[backlog["Suggested_Solution_Date"].notna()]
-        ssdata2 = close_cases_m[close_cases_m["Suggested_Solution_Date"].notna()]
-        ssdata = pd.concat([ssdata1, ssdata2])
-        ssdata = ssdata.sort_values(by=["Suggested_Solution_Date"], ascending=False)
-        ssdata = ssdata.drop_duplicates(subset="Case Number")
-        if len(ssdata) != 0:
-            dtrdata = pd.DataFrame()
-            dtrdata["Date/Time Opened"] = pd.to_datetime(ssdata["Date/Time Opened"]).dt.date
-            dtrdata["Suggested_Solution_Date"] = pd.to_datetime(ssdata["Suggested_Solution_Date"]).dt.date
-            dtr = dtrdata["Suggested_Solution_Date"] - dtrdata["Date/Time Opened"]
-            dtr_avg = str(round(dtr.sum().days / len(ssdata), 2))
+        # 未关闭的 case, 分为设置过 SS 和未设置过 SS
+        ssdata_bl_ss = backlog[backlog["Suggested_Solution_Date"].notna()]
+        ssdata_bl_noss = backlog[backlog["Suggested_Solution_Date"].isna()]
+        # 当月开的 case, 分为设置过 SS 和未设置过 SS
+        ssdata_mo_ss = open_cases_m[open_cases_m["Suggested_Solution_Date"].notna()]
+        ssdata_mo_noss = open_cases_m[open_cases_m["Suggested_Solution_Date"].isna()]
+        # 合并所有数据并去重
+        all_data = pd.concat([ssdata_bl_ss, ssdata_bl_noss, ssdata_mo_ss, ssdata_mo_noss])
+        all_data.sort_values(by=["Case Number"], ascending=False)
+        all_data.drop_duplicates(subset="Case Number")
+        # 基于是否设置过 SS 来拆分数据, 此时已经不存在重复的数据了
+        ss_data = all_data[all_data["Suggested_Solution_Date"].notna()]
+        ns_data = all_data[all_data["Suggested_Solution_Date"].isna()]
+        if len(ss_data) != 0 or len(ns_data) != 0:
+            dtr_ss_data = pd.DataFrame()
+            # SS 相关的时间
+            dtr_ss_data["Date/Time Opened"] = pd.to_datetime(ss_data["Date/Time Opened"]).dt.date
+            dtr_ss_data["Suggested_Solution_Date"] = pd.to_datetime(ss_data["Suggested_Solution_Date"]).dt.date
+            dtr_ss = dtr_ss_data["Suggested_Solution_Date"] - dtr_ss_data["Date/Time Opened"]
+            # 非 SS 的时间
+            dtr_ns = ns_data["Age (Days)"]
+            # 计算 DTR
+            dtr_avg = (dtr_ss.sum().days + dtr_ns.sum()) / len(all_data)
+            dtr_avg = str(round(dtr_avg, 2))
             summary_data.append(["DTR", dtr_avg])
-            show_debug("Cases_by_DTR.csv", ssdata, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Suggested_Solution_Date", "R&D Incident"])
+            show_debug("Cases_by_DTR.csv", all_data, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Suggested_Solution_Date", "R&D Incident", "Age (Days)"])
         else:
             summary_data.append(["DTR", "-"])
         # DTR only Support
-        ssdata1_os = backlog[backlog["Suggested_Solution_Date"].notna()]
-        ssdata2_os = close_cases_m[close_cases_m["Suggested_Solution_Date"].notna()]
-        ssdata_os = pd.concat([ssdata1_os, ssdata2_os])
-        ssdata_os = ssdata_os.sort_values(by=["Suggested_Solution_Date"], ascending=False)
-        ssdata_os = ssdata_os.drop_duplicates(subset="Case Number")
-        ssdata_os = ssdata_os[ssdata_os["R&D Incident"].isna()]
-        if len(ssdata_os) != 0:
-            dtrdata_os = pd.DataFrame()
-            dtrdata_os["Date/Time Opened"] = pd.to_datetime(ssdata_os["Date/Time Opened"]).dt.date
-            dtrdata_os["Suggested_Solution_Date"] = pd.to_datetime(ssdata_os["Suggested_Solution_Date"]).dt.date
-            dtr_os = dtrdata_os["Suggested_Solution_Date"] - dtrdata_os["Date/Time Opened"]
-            dtr_os_avg = str(round(dtr_os.sum().days / len(ssdata_os), 2))
-            summary_data.append(["DTR Support only", dtr_os_avg])
-            show_debug("Cases_by_DTR_only_Support.csv", ssdata_os, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Suggested_Solution_Date", "R&D Incident"])
+        all_data_os = all_data[all_data["R&D Incident"].isna()]
+        # 分为设置过 SS 的和没设置过 SS 的
+        ss_data_os = all_data_os[all_data_os["Suggested_Solution_Date"].notna()]
+        ns_data_os = all_data_os[all_data_os["Suggested_Solution_Date"].isna()]
+        if len(ss_data_os) != 0 or len(ns_data_os) != 0:
+            dtr_ss_data_os = pd.DataFrame()
+            # SS 相关的时间
+            dtr_ss_data_os["Date/Time Opened"] = pd.to_datetime(ss_data_os["Date/Time Opened"]).dt.date
+            dtr_ss_data_os["Suggested_Solution_Date"] = pd.to_datetime(ss_data_os["Suggested_Solution_Date"]).dt.date
+            dtr_ss_os = dtr_ss_data_os["Suggested_Solution_Date"] - dtr_ss_data_os["Date/Time Opened"]
+            # 非 SS 的时间
+            dtr_ns_os = ns_data_os["Age (Days)"]
+            # 计算 DTR
+            dtr_avg_os = (dtr_ss_os.sum().days + dtr_ns_os.sum()) / len(all_data)
+            dtr_avg_os = str(round(dtr_avg_os, 2))
+            summary_data.append(["DTR Support only", dtr_avg_os])
+            show_debug("Cases_by_DTR_only_Support.csv", all_data_os, columns=["Case Owner", "Case Number", "Status", "Date/Time Opened", "Suggested_Solution_Date", "R&D Incident", "Age (Days)"])
         else:
             summary_data.append(["DTR Support only", "-"])
     else:
