@@ -129,11 +129,12 @@ else:
     if len(close_cases_m) != 0:
         clos_cases_by_month = close_cases_m
     # 计算当前状态下状态为非 Closed 的 cases
+    # 下个月开始时间点为 pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd() + pd.offsets.DateOffset()
     backlog = rawcase[rawcase["Status"] != "Closed"]
-    backlog = backlog[backlog["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
+    backlog = backlog[backlog["Date/Time Opened"] < pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd() + pd.offsets.DateOffset()]
     backlog_history = rawcase[rawcase["Status"] == "Closed"]
-    backlog_history = backlog_history[backlog_history["Date/Time Closed"] > pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd()]
-    backlog_history = backlog_history[backlog_history["Date/Time Opened"] <= pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd()]
+    backlog_history = backlog_history[backlog_history["Date/Time Closed"] >= pd.to_datetime("{}-{}".format(y_offset, m_offset, 1), format="%Y-%m") + pd.offsets.MonthEnd() + pd.offsets.DateOffset()]
+    backlog_history = backlog_history[backlog_history["Date/Time Opened"] < pd.Timestamp(y_offset, m_offset, 1) + pd.offsets.MonthEnd() + pd.offsets.DateOffset()]
     backlog_total = pd.concat([backlog, backlog_history])
     # KCS 相关
     kcs_all = close_cases_m[close_cases_m["Knowledge Base Article"].notna() | close_cases_m["Idol Knowledge Link"].notna()]
