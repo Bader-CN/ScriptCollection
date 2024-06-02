@@ -3,12 +3,13 @@
 
 ########################################################################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.2
+#  version: 1.3
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...] [-debug]
 # release nodes:
 #   2024.05.07 - first release
 #   2024.05.15 - add debug function and change algorithms
 #   2024.05.16 - change DTR related algorithms
+#   2024.06.02 - fix backlog & survey related algorithms
 ########################################################################################################################
 
 import re
