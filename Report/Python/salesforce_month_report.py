@@ -257,8 +257,8 @@ else:
     # 根据年份和月份筛选数据
     survey_y = rawsurv[rawsurv["Customer Feed Back Survey: Last Modified Date"].dt.year == y_offset]
     survey_m = survey_y[survey_y["Customer Feed Back Survey: Last Modified Date"].dt.month == m_offset]
-    survey_ces = survey_m[survey_m["OpenText made it easy to handle my case"] >= 8.0]
-    survey_cast = survey_m[survey_m["Satisfied with support experience"] >= 8.0]
+    survey_ces = survey_m[(survey_m["OpenText made it easy to handle my case"] >= 8.0) | (survey_m["OpenText made it easy to handle my case"].isna())]
+    survey_cast = survey_m[(survey_m["Satisfied with support experience"] >= 8.0) | (survey_m["Satisfied with support experience"].isna())]
     # Survey CES & Survey CAST
     if len(survey_m) > 0:
         summary_data.append(["Survey CES", str(round(len(survey_ces) / len(survey_m) * 100, 2)) + "%"])
