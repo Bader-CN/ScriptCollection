@@ -3,13 +3,14 @@
 
 ########################################################################################################################
 #   author: zhanghong.personal@outlook.com
-#  version: 1.3
+#  version: 1.4
 #    usage: salesforce_month_report.py [month offset, like -1, -2, -3...] [-debug]
 # release nodes:
 #   2024.05.07 - first release
 #   2024.05.15 - add debug function and change algorithms
 #   2024.05.16 - change DTR related algorithms
 #   2024.06.02 - fix backlog & survey related algorithms
+#   2024.07.01 - csv encoding issue will be ignored
 ########################################################################################################################
 
 import re
@@ -114,7 +115,7 @@ for i in os.listdir(os.path.abspath("./")):
 if report_cases is None:
     print("[WARN] Case report miss columns, will ignore.")
 else:
-    rawcase = pd.read_csv(report_cases)
+    rawcase = pd.read_csv(report_cases, encoding="utf-8", encoding_errors='ignore')
     # 数据预处理
     rawcase["Date/Time Opened"] = pd.to_datetime(rawcase["Date/Time Opened"], format="%Y-%m-%d %p%I:%M")
     rawcase["Date/Time Closed"] = pd.to_datetime(rawcase["Date/Time Closed"], format="%Y-%m-%d %p%I:%M")
@@ -249,7 +250,7 @@ else:
 if report_survy is None:
     print("[WARN] Survey report miss columns, will ignore.")
 else:
-    rawsurv = pd.read_csv(report_survy)
+    rawsurv = pd.read_csv(report_survy, encoding="utf-8", encoding_errors='ignore')
     # 数据预处理
     rawsurv["Customer Feed Back Survey: Last Modified Date"] = pd.to_datetime(rawsurv["Customer Feed Back Survey: Last Modified Date"], format="%Y-%m-%d")
     # rawsurv["Closed Data"] = pd.to_datetime(rawsurv["Closed Data"], format="%Y-%m-%d")
