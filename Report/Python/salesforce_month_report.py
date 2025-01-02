@@ -11,6 +11,7 @@
 #   2024.05.16 - change DTR related algorithms
 #   2024.06.02 - fix backlog & survey related algorithms
 #   2024.07.01 - csv encoding issue will be ignored
+#   2025.01.02 - fix UnicodeDecodeError issue, will ignored it
 ########################################################################################################################
 
 import re
@@ -82,7 +83,7 @@ table.field_names = ["KPI", "{}-{}".format(str(y_offset), str(m_offset))]
 # 检查原始报告是否符合要求
 for i in os.listdir(os.path.abspath("./")):
     if re.findall(r"report\d+.csv", i, re.IGNORECASE):
-        with open(i, mode="r", encoding="utf-8") as f:
+        with open(i, mode="r", encoding="utf-8", errors="ignore") as f:
             heads = f.readline().strip().replace('"', '').split(",")
             # 检查是否符合 cases 报告
             head_by_cases = [
